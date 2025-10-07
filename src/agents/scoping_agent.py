@@ -2,6 +2,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage
 from pydantic import BaseModel, Field
 
+from src.base_agent import BaseAgent
 from src.deep_research_state import DeepResearchState
 
 RESEARCH_DOCUMENT_DESCRIPTION = """
@@ -128,7 +129,9 @@ class ScopingResponse(BaseModel):
     )
 
 
-class ScopingAgent:
+class ScopingAgent(BaseAgent):
+    name = "scoping_agent"
+
     def __init__(self, llm: BaseChatModel | None = None):
         self.llm: BaseChatModel = llm
 
@@ -155,4 +158,5 @@ class ScopingAgent:
         return {
             "messages": [AIMessage(content=response.answer)],
             "document": response.document,
+            "needs_research_clarification": response.needs_clarification,
         }

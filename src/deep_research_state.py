@@ -13,3 +13,7 @@ class DeepResearchState(BaseModel):
         default=None,
         description="the full context document that will be use further to guide the research",
     )
+    needs_research_clarification: bool = Field(
+        default=False,
+        description="whether or not the user needs to provide additional clarification about the research scope or context",
+    )
