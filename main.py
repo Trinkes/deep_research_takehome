@@ -1,33 +1,28 @@
+import asyncio
+
 from dotenv import load_dotenv
-from langchain.chat_models import init_chat_model
-from langchain_core.messages import BaseMessage
-from langgraph.graph import StateGraph
-from typing import Annotated, Sequence
+from langchain_core.messages import HumanMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-from pydantic import BaseModel, Field
-from langgraph.graph.message import add_messages
-from langgraph.graph import START, END
-
-load_dotenv()
+from src.deep_research_agent import DeepResearchAgent
+from src.deep_research_graph_builder import DeepResearchGraphBuilder
+from src.deep_research_state import DeepResearchState
 
 
-class State(BaseModel):
-    messages: Annotated[Sequence[BaseMessage], add_messages] = Field(default_factory=list, description="Chat history")
+def deep_research_agent():
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0)
+    return DeepResearchGraphBuilder(llm).build_graph()
 
 
-graph_builder = StateGraph(State)
-
-
-llm = init_chat_model("google_genai:gemini-2.0-flash")
-
-
-def chatbot(state: State):
-    return {"messages": [llm.invoke(state.messages)]}
-
-
-graph_builder.add_node("chatbot", chatbot)
-graph_builder.add_edge(START, "chatbot")
-graph_builder.add_edge("chatbot", END)
-
-
-deep_research_agent = graph_builder.compile()
+if __name__ == "__main__":
+    load_dotenv()
+    graph = deep_research_agent()
+    agent = DeepResearchAgent(graph)
+    state = DeepResearchState(
+        messages=[
+            HumanMessage(
+                content="I want to do some research about the weather forecast and its impact in the portuguese economy"
+            )
+        ]
+    )
+    print(asyncio.run(agent.perform_research(state)))

@@ -8,6 +8,7 @@ dependencies = [
     "debugpy>=1.8.17",
     "langchain-tavily>=0.2.12",
     "langchain[google-genai]>=0.3.27",
+    "langgraph-api==0.4.37",
     "langgraph-cli[inmem]>=0.4.2",
     "pydantic>=2.11.10",
     "ruff>=0.13.3",
