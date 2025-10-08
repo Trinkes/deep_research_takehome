@@ -19,6 +19,10 @@ class OrchestratorResearchState(BaseModel):
     research_report: str | None = Field(
         default=None, description="The completed research result"
     )
+    max_queries_per_topic: int = Field(
+        description="max queries to be performed per generated topic in the research",
+    )
+    max_generated_topics: int = Field(description="max generated topics per research")
 
     @property
     def unresearched_topics(self) -> list[str]:

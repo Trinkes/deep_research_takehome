@@ -6,7 +6,6 @@ from src.agents.answer_node import AnswerNode
 from src.agents.orchestrator.orchestrator_research_state import (
     OrchestratorResearchState,
 )
-from src.agents.orchestrator.orchestrator_router import OrchestratorRouter
 from src.agents.research_agent.research_state import ResearchState
 from src.agents.topic_extractor_agent import TopicExtractorAgent
 
@@ -15,9 +14,8 @@ class ResearchAgentOrchestratorGraphBuilder:
     def __init__(
         self,
     ):
-        self._research_graph: CompiledStateGraph = None
-        self._llm = None
-        self.router = OrchestratorRouter()
+        self._research_graph: CompiledStateGraph | None = None
+        self._llm: BaseLanguageModel | None = None
 
     def with_llm(
         self,
@@ -62,7 +60,12 @@ class ResearchAgentOrchestratorGraphBuilder:
         send_operations = []
         for topic in state.unresearched_topics:
             send_operations.append(
-                Send("research", ResearchState(research_topic=topic))
+                Send(
+                    "research",
+                    ResearchState(
+                        research_topic=topic, max_queries=state.max_queries_per_topic
+                    ),
+                )
             )
 
         return send_operations

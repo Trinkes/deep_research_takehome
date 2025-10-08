@@ -66,7 +66,11 @@ class DeepResearchGraphBuilder:
         return graph_builder.compile(checkpointer=MemorySaver())
 
     def research_agent_orchestrator(self, state: DeepResearchState):
-        research_state = OrchestratorResearchState(research_description=state.document)
+        research_state = OrchestratorResearchState(
+            research_description=state.document,
+            max_generated_topics=state.max_generated_topics,
+            max_queries_per_topic=state.max_queries_per_topic,
+        )
         results = self._research_agent.invoke(research_state)
         return {"messages": [AIMessage(content=results["research_report"])]}
 

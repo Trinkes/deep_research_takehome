@@ -1,9 +1,8 @@
 from langchain.prompts import Prompt
-from langchain_community.tools import DuckDuckGoSearchResults
 from langchain_core.language_models import BaseLanguageModel
 from pydantic import BaseModel, Field
 
-from src.agents.research_agent.research_state import ResearchState, ResearchResult
+from src.agents.research_agent.research_state import ResearchState
 from src.base_agent import BaseAgent
 
 
@@ -13,46 +12,43 @@ class ResearchAgentResponse(BaseModel):
     )
 
 
-class ResearchAgent(BaseAgent):
-    name = "research_agent"
-
+class QueryExtractor(BaseAgent):
     def __init__(self, llm: BaseLanguageModel | None = None):
         self.llm: BaseLanguageModel = llm
 
     def __call__(self, state: ResearchState) -> dict:
         prompt = Prompt.from_template("""
-        you are a research agent and your job is to take a topic and create a list of internet search queries
-        
-        <queries_already_made>
-        {queries}
-        </queries_already_made>
-        
-        <research_topic>
-        {research_topic}
-        </research_topic>
+You are a research agent specializing in generating effective internet search queries.
+
+Your task is to analyze the research topic and create a list of targeted search queries that will gather comprehensive information about the topic.
+
+Guidelines:
+1. Generate 3-5 diverse search queries that cover different aspects of the topic
+2. Make queries specific and focused rather than broad and generic
+3. Avoid duplicating queries that have already been made
+4. Use natural language that search engines can effectively process
+5. IMPORTANT: Only return an empty list if you have already made 5+ queries about this topic and are confident all aspects have been thoroughly covered
+
+<queries_already_made>
+{queries}
+</queries_already_made>
+
+<research_topic>
+{research_topic}
+</research_topic>
+
+If the queries_already_made list is empty, you MUST generate initial search queries to start the research. Generate search queries now.
         """)
         result: ResearchAgentResponse = self.llm.with_structured_output(
             ResearchAgentResponse
         ).invoke(
-            prompt.format(
-                queries=state.performed_queries, research_topic=state.research_topic
-            )
+            prompt.format(queries=state.queries, research_topic=state.research_topic)
         )
-        results = []
-        for query in result.queries:
-            # search = TavilySearch(max_results=1, include_raw_content=True, )
-            search = DuckDuckGoSearchResults(output_format="list")
+        queries = result.queries
+        number_exceeding_queries = (
+            len(state.queries) + len(queries) - state.max_queries
+        )
+        if number_exceeding_queries > 0:
+            queries = queries[:-number_exceeding_queries]
 
-            search_results = search.invoke(input=query)["results"]
-            for search_result in search_results:
-                results.append(
-                    ResearchResult(
-                        url=search_result["url"],
-                        query=query,
-                        title=search_result["title"],
-                        content=search_result.get("raw_content", None)
-                        or search_result.get("snippet", None),
-                    )
-                )
-
-        return {"performed_queries": result.queries, "query_results": results}
+        return {"queries": queries}

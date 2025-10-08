@@ -17,3 +17,10 @@ class DeepResearchState(BaseModel):
         default=False,
         description="whether or not the user needs to provide additional clarification about the research scope or context",
     )
+    max_generated_topics: int = Field(
+        default=4, description="max generated topics per research"
+    )
+    max_queries_per_topic: int = Field(
+        default=2,
+        description="max queries to be performed per generated topic in the research",
+    )

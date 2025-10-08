@@ -25,13 +25,19 @@ class TopicExtractorAgent(BaseAgent):
         prompt = Prompt.from_template("""You are a research topic extraction and planning agent. Your goal is to analyze a research description and identify specific, focused topics that need to be researched.
 
 # Research Description
+<research_description>
 {research_description}
+</research_description>
 
 # Already Researched Topics
+<researched_topics>
 {researched_topics}
+</researched_topics>
 
 # Current Research Results
+<results>
 {results}
+</results>
 
 # Your Task
 1. Analyze the research description to understand what needs to be researched
@@ -73,5 +79,10 @@ Examples of bad topics (too broad):
                 results="\n".join(f"- {result}" for result in state.results),
             )
         )
-
-        return {"searched_topics": response.topics}
+        topics = response.topics
+        exceeding_topics = (
+            len(topics) + len(state.searched_topics) - state.max_generated_topics
+        )
+        if exceeding_topics > 0:
+            topics = topics[:-exceeding_topics]
+        return {"searched_topics": topics}

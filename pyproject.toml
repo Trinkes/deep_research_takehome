@@ -5,9 +5,11 @@ description = "Add your description hereı"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "ddgs>=9.6.0",
     "debugpy>=1.8.17",
     "duckduckgo-search>=8.1.1",
     "langchain-community>=0.3.31",
+    "langchain-deepseek>=0.1.4",
     "langchain-ollama>=0.3.10",
     "langchain-tavily>=0.2.12",
     "langchain[google-genai]>=0.3.27",
