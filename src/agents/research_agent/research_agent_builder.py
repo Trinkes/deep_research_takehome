@@ -1,6 +1,7 @@
 from langchain_community.tools import DuckDuckGoSearchResults
 from langchain_core.language_models import BaseLanguageModel
 from langchain_tavily import TavilySearch
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.constants import END
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 from langgraph.types import Send
@@ -33,14 +34,18 @@ class ResearchAgentBuilder:
             send_operations.append(Send("online_search", search_query))
         return send_operations
 
-    def with_search_tool(self, search_tool: TavilySearch | DuckDuckGoSearchResults)->"ResearchAgentBuilder":
+    def with_search_tool(
+        self, search_tool: TavilySearch | DuckDuckGoSearchResults
+    ) -> "ResearchAgentBuilder":
         self._search_tool = search_tool
         return self
 
     def build_graph(self) -> CompiledStateGraph:
         graph_builder = StateGraph(ResearchState)
         graph_builder.add_node("query_extractor", QueryExtractor(llm=self._llm))
-        graph_builder.add_node("online_search", SearchAgent(search_tool=self._search_tool))
+        graph_builder.add_node(
+            "online_search", SearchAgent(search_tool=self._search_tool)
+        )
 
         graph_builder.set_entry_point("query_extractor")
         graph_builder.add_conditional_edges(
@@ -49,4 +54,4 @@ class ResearchAgentBuilder:
         graph_builder.add_edge("online_search", "query_extractor")
         graph_builder.set_finish_point("query_extractor")
 
-        return graph_builder.compile()
+        return graph_builder.compile(checkpointer=MemorySaver())
