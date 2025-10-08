@@ -130,8 +130,6 @@ class ScopingResponse(BaseModel):
 
 
 class ScopingAgent:
-    name = "scoping_agent"
-
     def __init__(self, llm: BaseChatModel | None = None):
         self.llm: BaseChatModel = llm
 

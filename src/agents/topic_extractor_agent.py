@@ -15,8 +15,6 @@ class TopicExtractorResponse(BaseModel):
 
 
 class TopicExtractorAgent:
-    name = "topic_extractor_agent"
-
     def __init__(self, llm: BaseLanguageModel | None = None):
         self.llm: BaseLanguageModel = llm
 

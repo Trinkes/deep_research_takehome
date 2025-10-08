@@ -30,16 +30,16 @@ class DeepResearchGraphBuilder:
 
     def build_graph(self) -> CompiledStateGraph:
         graph_builder = StateGraph(DeepResearchState)
-        graph_builder.add_node(ScopingAgent.name, ScopingAgent(self._llm))
+        graph_builder.add_node("scoping_agent", ScopingAgent(self._llm))
         graph_builder.add_node(
             "research_agent_orchestrator", self.research_agent_orchestrator
         )
 
-        graph_builder.set_entry_point(ScopingAgent.name)
+        graph_builder.set_entry_point("scoping_agent")
         graph_builder.add_conditional_edges(
-            ScopingAgent.name,
+            "scoping_agent",
             self._route_from_scoping,
-            ["research_agent_orchestrator", ScopingAgent.name],
+            ["research_agent_orchestrator", "scoping_agent"],
         )
         graph_builder.set_finish_point("research_agent_orchestrator")
 
@@ -56,7 +56,7 @@ class DeepResearchGraphBuilder:
 
     def _route_from_scoping(self, state: DeepResearchState) -> str:
         if state.needs_research_clarification:
-            return ScopingAgent.name
+            return "scoping_agent"
         else:
             return "research_agent_orchestrator"
 

@@ -33,18 +33,18 @@ class ResearchAgentOrchestratorGraphBuilder:
     def build_graph(self) -> CompiledStateGraph:
         graph_builder = StateGraph(OrchestratorResearchState)
 
-        graph_builder.add_node(TopicExtractorAgent.name, TopicExtractorAgent(self._llm))
+        graph_builder.add_node("topic_extractor_agent", TopicExtractorAgent(self._llm))
         graph_builder.add_node("research", self.research)
         graph_builder.add_node("answer", AnswerAgent(self._llm))
 
-        graph_builder.set_entry_point(TopicExtractorAgent.name)
+        graph_builder.set_entry_point("topic_extractor_agent")
 
         graph_builder.add_conditional_edges(
-            TopicExtractorAgent.name, self.parallel_research, ["research", "answer"]
+            "topic_extractor_agent", self.parallel_research, ["research", "answer"]
         )
         graph_builder.add_edge(
             "research",
-            TopicExtractorAgent.name,
+            "topic_extractor_agent",
         )
         graph_builder.set_finish_point("answer")
 
