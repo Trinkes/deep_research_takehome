@@ -1,19 +1,14 @@
-from typing import Callable
-
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph, StateGraph
-from typing_extensions import TypeAlias
 
 from src.agents.orchestrator.orchestrator_research_state import (
     OrchestratorResearchState,
 )
 from src.agents.scoping_agent import ScopingAgent
 from src.deep_research_state import DeepResearchState
-
-LanggraphNode: TypeAlias = Callable[[DeepResearchState], dict | DeepResearchState]
 
 
 class DeepResearchGraphBuilder:
@@ -55,7 +50,9 @@ class DeepResearchGraphBuilder:
 
         return graph_builder.compile(checkpointer=MemorySaver())
 
-    def research_agent_orchestrator(self, state: DeepResearchState, config: RunnableConfig | None = None) -> dict:
+    def research_agent_orchestrator(
+        self, state: DeepResearchState, config: RunnableConfig | None = None
+    ) -> dict:
         research_state = OrchestratorResearchState(
             research_description=state.document,
             max_generated_topics=state.max_generated_topics,
