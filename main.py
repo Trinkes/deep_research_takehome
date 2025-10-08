@@ -9,6 +9,7 @@ from langchain_tavily import TavilySearch
 
 from langgraph.graph.state import CompiledStateGraph
 
+from src.agents import DEFAULT_RESEARCH_OUTPUT_FORMAT
 from src.agents.orchestrator.orchestrator_research_agent_graph_builder import (
     ResearchAgentOrchestratorGraphBuilder,
 )
@@ -30,7 +31,9 @@ def create_llm():
     elif os.getenv("DEEPSEEK_API_KEY", None):
         return ChatDeepSeek(model=model_name or DEEPSEEK_DEFAULT_MODEL, temperature=0)
     else:
-        raise ValueError("Either GOOGLE_API_KEY or DEEPSEEK_API_KEY env variable needs to be set")
+        raise ValueError(
+            "Either GOOGLE_API_KEY or DEEPSEEK_API_KEY env variable needs to be set"
+        )
 
 
 def deep_research_agent() -> CompiledStateGraph:
@@ -51,6 +54,7 @@ def research_agent_orchestrator() -> CompiledStateGraph:
         ResearchAgentOrchestratorGraphBuilder()
         .with_llm(llm)
         .with_research_graph(research_agent_graph)
+        .with_output_structure(DEFAULT_RESEARCH_OUTPUT_FORMAT)
         .build_graph()
     )
 

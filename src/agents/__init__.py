@@ -1,58 +1,94 @@
 DEFAULT_RESEARCH_OUTPUT_FORMAT = """
-## Research Output Format
+# Universal Deep Research Output Format
 
-Your research output should follow this structured format:
+Your research report must follow the structure below, ensuring clarity, evidence, and adaptability across all topics.
 
-### Executive Summary
-- **Bottom Line Up Front (BLUF)**: 1-2 sentence direct answer to the research question
-- **Key Findings**: 3-5 bullet points highlighting the most important discoveries
-- **Confidence Level**: High/Medium/Low based on source quality and consensus
+Title
 
-### Research Methodology
-- **Sources Consulted**: Brief overview of types and number of sources (academic papers, industry reports, expert interviews, etc.)
-- **Search Strategy**: Key terms and databases/platforms used
-- **Limitations**: Any gaps in available data or research constraints
+---
 
-### Detailed Findings
+## 1. Context & Objective
+- **Research Goal**: What question or problem is being addressed?  
+- **Intended Use**: Decision-making, strategic insight, academic background, technical development, etc.  
+- **Scope & Boundaries**: What is included and excluded from this research?
 
-#### [Primary Topic Area 1]
-- **Overview**: Brief context and importance
-- **Key Data Points**: Specific statistics, trends, or facts with citations
-- **Expert Perspectives**: Relevant quotes or viewpoints from authorities
-- **Supporting Evidence**: Links to primary sources
+---
 
-#### [Primary Topic Area 2]
-[Repeat structure as above]
+## 2. Executive Summary
+- **Bottom Line Up Front (BLUF)**: 1–2 sentences summarizing the key conclusion.  
+- **Key Findings**: 3–5 critical takeaways, each with concise supporting evidence.  
+- **Confidence Level**: High / Medium / Low — based on the strength and consensus of sources.  
 
-#### [Additional Areas as Needed]
+---
 
-### Analysis & Synthesis
-- **Patterns & Trends**: What emerges across multiple sources
-- **Contradictions**: Where sources disagree and why
-- **Implications**: What this means for the user's context
-- **Future Outlook**: Predicted developments based on current data
+## 3. Research Methodology
+- **Sources Consulted**: Number and types (academic, technical, journalistic, primary data, etc.)  
+- **Search Strategy**: Databases, platforms, and key search terms used.  
+- **Evaluation Criteria**: How credibility and relevance were assessed.  
+- **Limitations**: Gaps in available data or constraints in scope/time.
 
-### Recommendations
-- **Immediate Actions**: What the user should do now
-- **Medium-term Considerations**: Steps for the next 3-6 months
-- **Long-term Strategy**: Broader strategic implications
+---
 
-### Source Bibliography
-- **Primary Sources**: Government data, academic studies, official reports
-- **Secondary Sources**: Industry analyses, expert commentary, news articles
-- **Tertiary Sources**: Summaries, encyclopedias, general references
+## 4. Thematic Findings
 
-### Appendices (if needed)
-- **Detailed Data Tables**: Raw statistics or comprehensive datasets
-- **Extended Quotes**: Full context for abbreviated citations in main text
-- **Methodology Notes**: Detailed search strings, excluded sources, etc.
+### [Theme 1: Name]
+- **Overview**: Explain its relevance to the main question.  
+- **Key Insights & Data**: Factual findings, statistics, or trends (**always cite sources**).  
+- **Expert or Institutional Perspectives**: Brief quotes or positions from reliable authorities.  
+- **Supporting Evidence**: Inline citations or footnotes with links.  
 
-## Formatting Guidelines
-- Use clear, descriptive headers with consistent hierarchy
-- Bold key terms and statistics for scannability
-- Include direct links to sources where possible
-- Keep paragraphs concise (3-4 sentences max)
-- Use bullet points for lists rather than dense paragraphs
-- Maintain professional, objective tone throughout
-- Cite sources using [Source Name, Date] format inline
+### [Theme 2: Name]
+*(Repeat the above structure for each major theme or dimension of the research.)*
+
+---
+
+## 5. Analysis & Synthesis
+- **Patterns & Correlations**: What overarching insights emerge across themes.  
+- **Contradictions & Debates**: Where sources diverge and possible reasons why.  
+- **Implications**: How findings affect the user’s goals or decisions.  
+- **Future Outlook**: Anticipated developments, emerging trends, or risks.
+
+---
+
+## 6. Recommendations
+- **Short-Term Actions (0–3 months)**: Immediate steps supported by the research.  
+- **Medium-Term (3–12 months)**: Actions or policies to prepare or monitor.  
+- **Long-Term Strategy (1 year+)**: Structural, strategic, or innovation-oriented implications.
+
+---
+
+## 7. Source Bibliography
+Organize sources by type:
+- **Primary**: Original datasets, official reports, academic papers.  
+- **Secondary**: Industry or policy analyses, credible journalistic sources.  
+- **Tertiary**: Encyclopedias, educational summaries, or general references.  
+
+Each citation should include:  
+`[Author/Institution, Title, Year, Link]`
+
+---
+
+## 8. Appendices (if applicable)
+- **Detailed Data Tables**  
+- **Extended Quotes or Case Studies**  
+- **Full Methodology Notes (search strings, inclusion/exclusion criteria)**
+
+---
+
+## 9. Glossary / Key Terms
+List and define important domain-specific or technical terms for clarity.
+
+---
+
+## Formatting & Style Guidelines
+- Use clear, consistent headers and logical hierarchy.  
+- Bold key terms and statistics for easy scanning.  
+- Include direct source links inline.  
+- Keep paragraphs concise (3–4 sentences max).  
+- Prefer bullet points to dense prose.  
+- Maintain professional, objective tone.  
+- Use `[Source Name, Date]` or numbered citations (e.g., [1], [2]) inline.  
+- Target output length: **2–4 pages summary**, plus appendices as needed.
+
+---
 """

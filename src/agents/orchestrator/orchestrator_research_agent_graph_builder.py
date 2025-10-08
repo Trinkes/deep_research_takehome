@@ -3,6 +3,7 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 from langgraph.types import Send
 
+from src.agents import DEFAULT_RESEARCH_OUTPUT_FORMAT
 from src.agents.answer_agent import AnswerAgent
 from src.agents.orchestrator.orchestrator_research_state import (
     OrchestratorResearchState,
@@ -17,6 +18,7 @@ class ResearchAgentOrchestratorGraphBuilder:
     ):
         self._research_graph: CompiledStateGraph | None = None
         self._llm: BaseLanguageModel | None = None
+        self._output_structure: str | None = None
 
     def with_llm(
         self,
@@ -29,6 +31,10 @@ class ResearchAgentOrchestratorGraphBuilder:
         self, research_graph: CompiledStateGraph
     ) -> "ResearchAgentOrchestratorGraphBuilder":
         self._research_graph = research_graph
+        return self
+
+    def with_output_structure(self, output_structure: str):
+        self._output_structure = output_structure
         return self
 
     def build_graph(self) -> CompiledStateGraph:
@@ -45,7 +51,12 @@ class ResearchAgentOrchestratorGraphBuilder:
 
         graph_builder.add_node("topic_extractor_agent", TopicExtractorAgent(self._llm))
         graph_builder.add_node("research", self.research)
-        graph_builder.add_node("answer", AnswerAgent(self._llm))
+        graph_builder.add_node(
+            "answer",
+            AnswerAgent(
+                self._llm, self._output_structure or DEFAULT_RESEARCH_OUTPUT_FORMAT
+            ),
+        )
 
         graph_builder.set_entry_point("topic_extractor_agent")
 

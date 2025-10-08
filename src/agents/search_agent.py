@@ -23,7 +23,11 @@ class SearchAgent:
 
             url = search_result.get("url") or search_result.get("link") or ""
             title = search_result.get("title") or "Untitled"
-            content = search_result.get("raw_content") or search_result.get("snippet")
+            content = (
+                search_result.get("raw_content")
+                or search_result.get("content")
+                or search_result.get("snippet")
+            )
 
             if not content:
                 continue

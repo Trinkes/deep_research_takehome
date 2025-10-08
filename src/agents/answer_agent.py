@@ -56,6 +56,7 @@ Generate a comprehensive research report based on the above information.
             for query_result in result.query_results:
                 content = f"""
 <research_item>
+<url>{query_result.url}</url>
 <title>{query_result.title}</title>
 <content>
 {query_result.content}
@@ -64,7 +65,9 @@ Generate a comprehensive research report based on the above information.
 """
                 research_results.append(content)
         if len(research_results) == 0:
-            research_results.append("No research results available to generate a report.")
+            research_results.append(
+                "No research results available to generate a report."
+            )
 
         response: AnswerResponse = self.llm.with_structured_output(
             AnswerResponse

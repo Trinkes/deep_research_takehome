@@ -132,6 +132,31 @@ result = agent.perform_research(
 )
 ```
 
+### Custom Output Format
+
+To customize the research report structure, modify the output format in `main.py`:
+
+```python
+# In main.py, update the research_agent_orchestrator function:
+def research_agent_orchestrator() -> CompiledStateGraph:
+    llm = create_llm()
+    research_agent_graph = research_agent()
+
+    custom_format = """
+    # Your Custom Report Structure
+    ## Section 1
+    ## Section 2
+    """
+
+    return (
+        ResearchAgentOrchestratorGraphBuilder()
+        .with_llm(llm)
+        .with_research_graph(research_agent_graph)
+        .with_output_structure(custom_format)  # Pass your custom format here
+        .build_graph()
+    )
+```
+
 ## Notes
 
 - All tests were done using `deepseek-chat` model
@@ -143,4 +168,5 @@ result = agent.perform_research(
 - better error handling ex: 
   - use a fallback model if the main one fails
   - show an error to the user
+- Experiment with different models on each step and optimize for quality or pricing
 
