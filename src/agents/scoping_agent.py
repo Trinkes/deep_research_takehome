@@ -1,5 +1,6 @@
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage
+from langchain_core.messages import AIMessage, HumanMessage
+from langgraph.types import interrupt
 from pydantic import BaseModel, Field
 
 from src.base_agent import BaseAgent
@@ -135,7 +136,7 @@ class ScopingAgent(BaseAgent):
     def __init__(self, llm: BaseChatModel | None = None):
         self.llm: BaseChatModel = llm
 
-    def __call__(self, state: DeepResearchState):
+    def __call__(self, state: DeepResearchState) -> dict:
         prompt = f"""
                 Your job is to prepare a **context document** that will guide a deep research process around a given topic.
 
@@ -155,8 +156,19 @@ class ScopingAgent(BaseAgent):
             ScopingResponse
         ).invoke(prompt)
         response = ScopingResponse.model_validate(response)
+
+        if response.needs_clarification:
+            user_response = interrupt(response.answer)
+            return {
+                "messages": [
+                    AIMessage(content=response.answer),
+                    HumanMessage(content=user_response),
+                ],
+                "needs_research_clarification": True,
+            }
+
         return {
             "messages": [AIMessage(content=response.answer)],
             "document": response.document,
-            "needs_research_clarification": response.needs_clarification,
+            "needs_research_clarification": False,
         }

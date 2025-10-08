@@ -1,7 +1,11 @@
 {
-  "dependencies": ["."],
+  "dependencies": [
+    "."
+  ],
   "graphs": {
-    "deep_research_agent": "./main.py:deep_research_agent"
+    "deep_research_agent": "./main.py:deep_research_agent",
+    "research_agent_orchestrator": "./main.py:research_agent_orchestrator",
+    "research_agent": "./main.py:research_agent"
   },
   "env": ".env"
 }

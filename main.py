@@ -2,16 +2,40 @@ import asyncio
 
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
+from langgraph.graph.state import CompiledStateGraph
 
+from src.agents.orchestrator.orchestrator_research_agent_graph_builder import (
+    ResearchAgentOrchestratorGraphBuilder,
+)
+from src.agents.research_agent.research_agent_builder import ResearchAgentBuilder
 from src.deep_research_agent import DeepResearchAgent
 from src.deep_research_graph_builder import DeepResearchGraphBuilder
 from src.deep_research_state import DeepResearchState
 
 
-def deep_research_agent():
-    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0)
+def deep_research_agent() -> CompiledStateGraph:
+    # llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash-lite", temperature=0)
+    llm = ChatOllama(model="deepseek-r1:1.5b",temperature=0)
     return DeepResearchGraphBuilder(llm).build_graph()
+
+
+def research_agent_orchestrator() -> CompiledStateGraph:
+    #     llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash-lite", temperature=0)
+    llm = ChatOllama(model="deepseek-r1:1.5b",temperature=0)
+    research_agent_graph = research_agent()
+    return (
+        ResearchAgentOrchestratorGraphBuilder()
+        .with_llm(llm)
+        .with_research_graph(research_agent_graph)
+        .build_graph()
+    )
+
+
+def research_agent() -> CompiledStateGraph:
+    #     llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash-lite", temperature=0)
+    llm = ChatOllama(model="deepseek-r1:1.5b",temperature=0)
+    return ResearchAgentBuilder().with_llm(llm=llm).build_graph()
 
 
 if __name__ == "__main__":
