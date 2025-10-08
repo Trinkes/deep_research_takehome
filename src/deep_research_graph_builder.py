@@ -29,6 +29,15 @@ class DeepResearchGraphBuilder:
         return self
 
     def build_graph(self) -> CompiledStateGraph:
+        if self._llm is None:
+            raise ValueError(
+                "LLM must be configured using with_llm() before building graph"
+            )
+        if self._orchestrator is None:
+            raise ValueError(
+                "Orchestrator must be configured using with_orchestrator() before building graph"
+            )
+
         graph_builder = StateGraph(DeepResearchState)
         graph_builder.add_node("scoping_agent", ScopingAgent(self._llm))
         graph_builder.add_node(
