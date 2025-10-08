@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+echo ""
+echo "    🔨  S T O P !   H A M M E R   T I M E !  🔨"
+echo ""
+echo "          ╔═══════════════╗"
+echo "          ║█████████████████"
+echo "          ║█████████████████"
+echo "          ╚═══════════════╝"
+echo "                 ║ ║"
+echo "                 ║ ║"
+echo "                 ║ ║"
+echo "                 ║ ║"
+echo "                 ║ ║"
+echo "                 ╚═╝"
+echo ""
+echo "        Can't touch this! 🎵"
+echo ""
+echo "╦  ┌─┐┌┐┌┌─┐╔═╗┬─┐┌─┐┌─┐┬ ┬  ╔╦╗╔═╗╦  ╦"
+echo "║  ├─┤││││ ┬║ ╦├┬┘├─┤├─┘├─┤   ║║║╣ ╚╗╔╝"
+echo "╩═╝┴ ┴┘└┘└─┘╚═╝┴└─┴ ┴┴  ┴ ┴  ═╩╝╚═╝ ╚╝ "
+echo ""
+echo "🌐 Access from your browser:"
+echo "   - 🚀 API: http://localhost:2024"
+echo "   - 📚 API Docs: http://localhost:2024/docs"
+echo "   - 🎨 Studio: https://smith.langchain.com/studio/?baseUrl=http://localhost:2024"
+echo ""
+echo "Starting LangGraph dev server..."
+echo ""
+
+exec /app/.venv/bin/langgraph dev --host 0.0.0.0 --port 2024
