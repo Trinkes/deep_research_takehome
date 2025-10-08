@@ -9,19 +9,27 @@ class SearchAgent:
 
     def __call__(self, query: str):
         search_results = self.search_tool.invoke(input=query)
+
         if isinstance(search_results, dict):
-            search_results = search_results["results"]
+            search_results = search_results.get("results", [])
+
+        if not search_results:
+            return {"query_results": []}
 
         results = []
         for search_result in search_results:
+            if not isinstance(search_result, dict):
+                continue
+
+            url = search_result.get("url") or search_result.get("link") or ""
+            title = search_result.get("title") or "Untitled"
+            content = search_result.get("raw_content") or search_result.get("snippet")
+
+            if not content:
+                continue
+
             results.append(
-                ResearchResult(
-                    url=search_result.get("url", None)
-                    or search_result.get("link", None),
-                    query=query,
-                    title=search_result.get("title", "untitled"),
-                    content=search_result.get("raw_content", None)
-                    or search_result.get("snippet", None),
-                )
+                ResearchResult(url=url, query=query, title=title, content=content)
             )
+
         return {"query_results": results}

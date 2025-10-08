@@ -152,7 +152,6 @@ class ScopingAgent:
         response: ScopingResponse = self.llm.with_structured_output(
             ScopingResponse
         ).invoke(prompt)
-        response = ScopingResponse.model_validate(response)
 
         if response.needs_clarification:
             user_response = interrupt(response.answer)
