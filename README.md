@@ -1,56 +1,73 @@
 # Deep Researcher Agent
 
-## How to run
+A multi-agent system for conducting comprehensive internet research on any topic.
 
-1. copy `.env.example` file to `.env`
+## Quick Start
+
+### 1. Configure Environment
+
+Copy the example environment file:
 
 ```shell
-cd path_to_project_root_folder
 cp .env.example .env
 ```
 
-2. Update `.env` file
-    1. Fill in `GOOGLE_API_KEY` variable
-    2. (Optional) Fill in `TAVILY_API_KEY`. Duck Duck Go search will be used if `TAVILY_API_KEY` is not filled in. since
-       DuckDuckGo doesn't provide the page's content, the snippet field will be used
-    3. (Optional) Fill in `LANGSMITH*` keys to be able to trace the agent llm execution
-3. then we have 2 options:
-    1. using docker compose
-    ```shell
-    docker compose up
-    ```
-    2. using uv
-    ```shell
-    uv sync
-    uv run langgraph dev
-    ```
-4. open https://smith.langchain.com/studio/?baseUrl=http://localhost:2024
+Update `.env` with your API keys:
+- **Required**: `GOOGLE_API_KEY` - Your Google API key
+- **Optional**: `TAVILY_API_KEY` - For enhanced search (falls back to DuckDuckGo if not provided)
+- **Optional**: `LANGSMITH_*` - For LLM execution tracing in LangSmith
+
+> **Note**: DuckDuckGo search uses snippets instead of full page content since it doesn't provide page content directly.
+
+### 2. Run the Application
+
+Choose one of the following options:
+
+**Option A: Docker Compose** (Recommended)
+```shell
+docker compose up
+```
+
+**Option B: UV Package Manager**
+```shell
+uv sync
+uv run langgraph dev
+```
+
+### 3. Access the Studio
+
+Open the LangGraph Studio at:
+```
+https://smith.langchain.com/studio/?baseUrl=http://localhost:2024
+```
 
 > [!IMPORTANT]
-> When running through docker, make sure you use the URL provided above (step 4). If you use the url provided by the
-> langgraph dev command, it won't work since it will use `?baseUrl=http://0.0.0.0:2024` instead of
-`?baseUrl=http://localhost:2024`
+> When using Docker, always use `baseUrl=http://localhost:2024` (not `http://0.0.0.0:2024`) to ensure proper connectivity.
 
-## Available agents
+## Agent Architecture
 
-There are three different agents available each one of them has its own scope:
+The system consists of three specialized agents working together:
 
 ### Research Agent (`research_agent`)
 
-This agent's job is to get in a topic and make as many internet searches as needed about the provided topic.
-This agent has a state variable to control the max number of searches per topic.
+Performs focused internet searches on a single topic.
+
+- **Purpose**: Deep dive into individual research topics
+- **Control**: `max_queries_per_topic` - Limits the number of searches per topic
 
 ### Research Agent Orchestrator (`research_agent_orchestrator`)
 
-Agent that manages the overall research.
-It extracts topics from the provided research description (context) and uses `Research Agent` to search for a specific
-topic.
-It will extract as many topics from the context as it needs to create the research.
-This agent has a state variable to control the max number of topics extracted from the research document.
+Manages the overall research process and coordinates multiple Research Agents.
+
+- **Purpose**: Breaks down research into topics and delegates to Research Agents
+- **Control**: `max_generated_topics` - Limits the number of topics extracted from research context
 
 ### Deep Research Agent (`deep_research_agent`)
 
-This agent will request more context from the user if needed and produce a detailed document about the research to be
-performed. Then passes this document to `Research Agent Orchestrator` for him to proceed with the research.
-State variables `max_generated_topics` and `max_queries_per_topic` to control the research depth
+Top-level agent that gathers requirements and orchestrates comprehensive research.
+
+- **Purpose**: Collects user context, generates research document, and delegates to orchestrator
+- **Control**:
+  - `max_generated_topics` - Maximum topics to research
+  - `max_queries_per_topic` - Maximum searches per topic
 
