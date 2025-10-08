@@ -1,33 +1,52 @@
 from dotenv import load_dotenv
-from langchain.chat_models import init_chat_model
-from langchain_core.messages import BaseMessage
-from langgraph.graph import StateGraph
-from typing import Annotated, Sequence
+from langchain_core.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
 
-from pydantic import BaseModel, Field
-from langgraph.graph.message import add_messages
-from langgraph.graph import START, END
+# from langchain_ollama import ChatOllama
+from langgraph.graph.state import CompiledStateGraph
 
-load_dotenv()
-
-
-class State(BaseModel):
-    messages: Annotated[Sequence[BaseMessage], add_messages] = Field(default_factory=list, description="Chat history")
-
-
-graph_builder = StateGraph(State)
+from src.agents.orchestrator.orchestrator_research_agent_graph_builder import (
+    ResearchAgentOrchestratorGraphBuilder,
+)
+from src.agents.research_agent.research_agent_builder import ResearchAgentBuilder
+from src.deep_research_agent import DeepResearchAgent
+from src.deep_research_graph_builder import DeepResearchGraphBuilder
+from src.deep_research_state import DeepResearchState
 
 
-llm = init_chat_model("google_genai:gemini-2.0-flash")
+def deep_research_agent() -> CompiledStateGraph:
+    # llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash-lite", temperature=0)
+    llm = ChatDeepSeek(model="deepseek-chat", max_tokens=4000, temperature=0)
+    return DeepResearchGraphBuilder(llm).build_graph()
 
 
-def chatbot(state: State):
-    return {"messages": [llm.invoke(state.messages)]}
+def research_agent_orchestrator() -> CompiledStateGraph:
+    #     llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash-lite", temperature=0)
+    llm = ChatDeepSeek(model="deepseek-chat", max_tokens=4000, temperature=0)
+    research_agent_graph = research_agent()
+    return (
+        ResearchAgentOrchestratorGraphBuilder()
+        .with_llm(llm)
+        .with_research_graph(research_agent_graph)
+        .build_graph()
+    )
 
 
-graph_builder.add_node("chatbot", chatbot)
-graph_builder.add_edge(START, "chatbot")
-graph_builder.add_edge("chatbot", END)
+def research_agent() -> CompiledStateGraph:
+    #     llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash-lite", temperature=0)
+    llm = ChatDeepSeek(model="deepseek-chat", max_tokens=4000, temperature=0)
+    return ResearchAgentBuilder().with_llm(llm=llm).build_graph()
 
 
-deep_research_agent = graph_builder.compile()
+if __name__ == "__main__":
+    load_dotenv()
+    graph = deep_research_agent()
+    agent = DeepResearchAgent(graph)
+    state = DeepResearchState(
+        messages=[
+            HumanMessage(
+                content="I want to do some research about the weather forecast and its impact in the portuguese economy"
+            )
+        ]
+    )
+    print(agent.perform_research(state, config={"configurable": {"thread_id": "1"}}))
