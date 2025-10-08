@@ -55,7 +55,7 @@ class DeepResearchGraphBuilder:
 
         return graph_builder.compile(checkpointer=MemorySaver())
 
-    def research_agent_orchestrator(self, state: DeepResearchState, config: RunnableConfig) -> dict:
+    def research_agent_orchestrator(self, state: DeepResearchState, config: RunnableConfig | None = None) -> dict:
         research_state = OrchestratorResearchState(
             research_description=state.document,
             max_generated_topics=state.max_generated_topics,

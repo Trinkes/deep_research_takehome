@@ -60,7 +60,7 @@ class ResearchAgentOrchestratorGraphBuilder:
 
         return graph_builder.compile()
 
-    def research(self, state: ResearchState, config: RunnableConfig):
+    def research(self, state: ResearchState, config: RunnableConfig | None = None):
         results = self._research_graph.invoke(state, config=config)
         return {"results": [results]}
 
