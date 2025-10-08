@@ -1,6 +1,10 @@
+import os
+
 from dotenv import load_dotenv
+from langchain_community.tools import DuckDuckGoSearchResults
 from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_tavily import TavilySearch
 
 from langgraph.graph.state import CompiledStateGraph
 
@@ -37,7 +41,17 @@ def research_agent_orchestrator() -> CompiledStateGraph:
 
 def research_agent() -> CompiledStateGraph:
     llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash-lite", temperature=0)
-    return ResearchAgentBuilder().with_llm(llm=llm).build_graph()
+    if os.getenv("TAVILY_API_KEY"):
+        search = TavilySearch(
+            max_results=1,
+            include_raw_content=True,
+        )
+    else:
+        search = DuckDuckGoSearchResults(output_format="list")
+
+    return (
+        ResearchAgentBuilder().with_llm(llm=llm).with_search_tool(search).build_graph()
+    )
 
 
 if __name__ == "__main__":

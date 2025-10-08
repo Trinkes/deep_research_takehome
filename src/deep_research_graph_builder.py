@@ -18,9 +18,8 @@ LanggraphNode: TypeAlias = Callable[[DeepResearchState], dict | DeepResearchStat
 class DeepResearchGraphBuilder:
     def __init__(
         self,
-        llm: BaseLanguageModel | None = None,
     ):
-        self.llm = llm
+        self._llm = None
         self._orchestrator = None
 
     def with_orchestrator(
@@ -31,7 +30,7 @@ class DeepResearchGraphBuilder:
 
     def build_graph(self) -> CompiledStateGraph:
         graph_builder = StateGraph(DeepResearchState)
-        graph_builder.add_node(ScopingAgent.name, ScopingAgent(self.llm))
+        graph_builder.add_node(ScopingAgent.name, ScopingAgent(self._llm))
         graph_builder.add_node(
             "research_agent_orchestrator", self.research_agent_orchestrator
         )
