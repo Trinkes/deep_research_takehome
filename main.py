@@ -51,4 +51,8 @@ if __name__ == "__main__":
             )
         ]
     )
-    print(asyncio.run(agent.perform_research(state)))
+    print(
+        asyncio.run(
+            agent.perform_research(state, config={"configurable": {"thread_id": "1"}})
+        )
+    )

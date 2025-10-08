@@ -20,7 +20,7 @@ class SearchAgent(BaseAgent):
                     url=search_result.get("url", None)
                     or search_result.get("link", None),
                     query=query,
-                    title=search_result["title"],
+                    title=search_result.get("title", "untitled"),
                     content=search_result.get("raw_content", None)
                     or search_result.get("snippet", None),
                 )

@@ -7,5 +7,7 @@ class DeepResearchAgent:
     def __init__(self, graph: CompiledStateGraph):
         self.graph = graph
 
-    async def perform_research(self, state: DeepResearchState) -> dict:
-        return await self.graph.ainvoke(state)
+    async def perform_research(
+        self, state: DeepResearchState, config: dict = None
+    ) -> dict:
+        return await self.graph.ainvoke(state, config=config)

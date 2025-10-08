@@ -18,7 +18,7 @@ class AnswerNode:
     def __init__(
         self,
         llm: BaseLanguageModel | None = None,
-        output_format: Prompt = DEFAULT_RESEARCH_OUTPUT_FORMAT,
+        output_format: str = DEFAULT_RESEARCH_OUTPUT_FORMAT,
     ):
         self.output_format = output_format
         self.llm: BaseLanguageModel = llm
@@ -63,6 +63,8 @@ Generate a comprehensive research report based on the above information.
 </research_item>
 """
                 research_results.append(content)
+        if len(research_results) == 0:
+            research_results.append("No research results available to generate a report.")
 
         response: AnswerResponse = self.llm.with_structured_output(
             AnswerResponse

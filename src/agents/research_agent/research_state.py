@@ -23,7 +23,7 @@ class ResearchState(BaseModel):
         default_factory=list, description="list of raw results from the queries"
     )
     max_queries: int = Field(
-        description="max amount of queries to be performed on a topic"
+        default=2, description="max amount of queries to be performed on a topic"
     )
 
     @property
