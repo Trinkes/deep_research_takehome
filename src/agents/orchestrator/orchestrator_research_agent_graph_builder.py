@@ -32,6 +32,15 @@ class ResearchAgentOrchestratorGraphBuilder:
         return self
 
     def build_graph(self) -> CompiledStateGraph:
+        if self._llm is None:
+            raise ValueError(
+                "LLM must be configured using with_llm() before building graph"
+            )
+        if self._research_graph is None:
+            raise ValueError(
+                "Research graph must be configured using with_research_graph() before building graph"
+            )
+
         graph_builder = StateGraph(OrchestratorResearchState)
 
         graph_builder.add_node("topic_extractor_agent", TopicExtractorAgent(self._llm))

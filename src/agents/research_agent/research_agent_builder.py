@@ -41,6 +41,15 @@ class ResearchAgentBuilder:
         return self
 
     def build_graph(self) -> CompiledStateGraph:
+        if self._llm is None:
+            raise ValueError(
+                "LLM must be configured using with_llm() before building graph"
+            )
+        if self._search_tool is None:
+            raise ValueError(
+                "Search tool must be configured using with_search_tool() before building graph"
+            )
+
         graph_builder = StateGraph(ResearchState)
         graph_builder.add_node("query_extractor", QueryExtractor(llm=self._llm))
         graph_builder.add_node(
