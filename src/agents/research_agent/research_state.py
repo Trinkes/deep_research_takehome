@@ -2,11 +2,10 @@ from operator import add
 from typing import Sequence, Annotated
 
 from pydantic import BaseModel, Field
-from pydantic_core import Url
 
 
 class ResearchResult(BaseModel):
-    url: Url | None = None
+    url: str
     query: str
     title: str
     content: str | None = None

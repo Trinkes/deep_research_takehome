@@ -40,8 +40,9 @@ class ResearchAgentBuilder:
 
         graph_builder.set_entry_point("query_extractor")
         graph_builder.add_conditional_edges(
-            "query_extractor", self.online_search, path_map=[]
+            "query_extractor", self.online_search, path_map=["online_search", END]
         )
-        graph_builder.set_finish_point("online_search")
+        graph_builder.add_edge("online_search", "query_extractor")
+        graph_builder.set_finish_point("query_extractor")
 
         return graph_builder.compile()
