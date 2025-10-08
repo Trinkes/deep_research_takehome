@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from langchain_community.tools import DuckDuckGoSearchResults
 from langchain_core.messages import HumanMessage
+from langchain_deepseek import ChatDeepSeek
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_tavily import TavilySearch
 
@@ -16,13 +17,20 @@ from src.deep_research_agent import DeepResearchAgent
 from src.deep_research_graph_builder import DeepResearchGraphBuilder
 from src.deep_research_state import DeepResearchState
 
-DEFAULT_MODEL = "models/gemini-2.5-flash-lite"
+GOOGLE_DEFAULT_MODEL = "models/gemini-2.5-flash-lite"
+DEEPSEEK_DEFAULT_MODEL = "deepseek-chat"
 
 
 def create_llm():
-    """Create an LLM instance with configuration from environment variables."""
-    model_name = os.getenv("GOOGLE_MODEL", DEFAULT_MODEL)
-    return ChatGoogleGenerativeAI(model=model_name, temperature=0)
+    model_name = os.getenv("MODEL_NAME", None)
+    if os.getenv("GOOGLE_API_KEY", None):
+        return ChatGoogleGenerativeAI(
+            model=model_name or GOOGLE_DEFAULT_MODEL, temperature=0
+        )
+    elif os.getenv("DEEPSEEK_API_KEY", None):
+        return ChatDeepSeek(model=model_name or DEEPSEEK_DEFAULT_MODEL, temperature=0)
+    else:
+        raise ValueError("Either GOOGLE_API_KEY or DEEPSEEK_API_KEY env variable needs to be set")
 
 
 def deep_research_agent() -> CompiledStateGraph:

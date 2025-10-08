@@ -1,6 +1,6 @@
 from typing import Callable
 
-from langchain_core.language_models import BaseLanguageModel, BaseChatModel
+from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph, StateGraph
@@ -20,7 +20,7 @@ class DeepResearchGraphBuilder:
         self,
     ):
         self._llm = None
-        self._orchestrator = None
+        self._orchestrator: CompiledStateGraph | None = None
 
     def with_orchestrator(
         self, orchestrator: CompiledStateGraph | None
@@ -54,7 +54,7 @@ class DeepResearchGraphBuilder:
 
         return graph_builder.compile(checkpointer=MemorySaver())
 
-    def research_agent_orchestrator(self, state: DeepResearchState):
+    def research_agent_orchestrator(self, state: DeepResearchState) -> dict:
         research_state = OrchestratorResearchState(
             research_description=state.document,
             max_generated_topics=state.max_generated_topics,
@@ -64,7 +64,7 @@ class DeepResearchGraphBuilder:
         return {"messages": [AIMessage(content=results["research_report"])]}
 
     def _route_from_scoping(self, state: DeepResearchState) -> str:
-        if state.needs_research_clarification:
+        if state.needs_research_clarification or state.document is None:
             return "scoping_agent"
         else:
             return "research_agent_orchestrator"

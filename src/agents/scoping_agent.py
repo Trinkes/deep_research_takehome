@@ -1,5 +1,5 @@
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langgraph.types import interrupt
 from pydantic import BaseModel, Field
 
@@ -134,24 +134,22 @@ class ScopingAgent:
         self.llm: BaseChatModel = llm
 
     def __call__(self, state: DeepResearchState) -> dict:
-        prompt = f"""
-                Your job is to prepare a **context document** that will guide a deep research process around a given topic.
+        system_message = SystemMessage(
+            content="""Your job is to prepare a **context document** that will guide a deep research process around a given topic.
 
-                **Output format:**
-                - `answer`: A brief message to the user. If clarification is needed, ask clear, concise, numbered questions. If ready to proceed, briefly confirm the research scope.
-                - `document`: The full research document structure (only if no clarification needed). Fill in each section with what should be researched based on the topic.
-                - `needs_clarification`: Set to true if you need more information from the user.
+**Output format:**
+- `answer`: A brief message to the user. If clarification is needed, ask clear, concise, numbered questions. If ready to proceed, briefly confirm the research scope.
+- `document`: The full research document structure (only if no clarification needed). Fill in each section with what should be researched based on the topic. If no further clarification is needed, a document must be provided
+- `needs_clarification`: Set to true if you need any input from the user.
 
-                **Important:** Do NOT include the full research document structure in the `answer` field. Keep the answer concise and user-friendly.
+**Important:** Do NOT include the full research document structure in the `answer` field. Keep the answer concise and user-friendly."""
+        )
 
-                <chat_history>
-                {state.messages}
-                </chat_history>
-                """
+        messages = [system_message] + list(state.messages)
 
         response: ScopingResponse = self.llm.with_structured_output(
             ScopingResponse
-        ).invoke(prompt)
+        ).invoke(messages)
 
         if response.needs_clarification:
             user_response = interrupt(response.answer)
