@@ -16,9 +16,17 @@ from src.deep_research_agent import DeepResearchAgent
 from src.deep_research_graph_builder import DeepResearchGraphBuilder
 from src.deep_research_state import DeepResearchState
 
+DEFAULT_MODEL = "models/gemini-2.5-flash-lite"
+
+
+def create_llm():
+    """Create an LLM instance with configuration from environment variables."""
+    model_name = os.getenv("GOOGLE_MODEL", DEFAULT_MODEL)
+    return ChatGoogleGenerativeAI(model=model_name, temperature=0)
+
 
 def deep_research_agent() -> CompiledStateGraph:
-    llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash-lite", temperature=0)
+    llm = create_llm()
     orchestrator = research_agent_orchestrator()
     return (
         DeepResearchGraphBuilder()
@@ -29,7 +37,7 @@ def deep_research_agent() -> CompiledStateGraph:
 
 
 def research_agent_orchestrator() -> CompiledStateGraph:
-    llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash-lite", temperature=0)
+    llm = create_llm()
     research_agent_graph = research_agent()
     return (
         ResearchAgentOrchestratorGraphBuilder()
@@ -40,7 +48,7 @@ def research_agent_orchestrator() -> CompiledStateGraph:
 
 
 def research_agent() -> CompiledStateGraph:
-    llm = ChatGoogleGenerativeAI(model="models/gemini-2.5-flash-lite", temperature=0)
+    llm = create_llm()
     if os.getenv("TAVILY_API_KEY"):
         search = TavilySearch(
             max_results=1,
