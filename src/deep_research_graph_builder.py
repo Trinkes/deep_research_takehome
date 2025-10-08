@@ -2,6 +2,7 @@ from typing import Callable
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage
+from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 from typing_extensions import TypeAlias
@@ -54,13 +55,13 @@ class DeepResearchGraphBuilder:
 
         return graph_builder.compile(checkpointer=MemorySaver())
 
-    def research_agent_orchestrator(self, state: DeepResearchState) -> dict:
+    def research_agent_orchestrator(self, state: DeepResearchState, config: RunnableConfig) -> dict:
         research_state = OrchestratorResearchState(
             research_description=state.document,
             max_generated_topics=state.max_generated_topics,
             max_queries_per_topic=state.max_queries_per_topic,
         )
-        results = self._orchestrator.invoke(research_state)
+        results = self._orchestrator.invoke(research_state, config=config)
         return {"messages": [AIMessage(content=results["research_report"])]}
 
     def _route_from_scoping(self, state: DeepResearchState) -> str:

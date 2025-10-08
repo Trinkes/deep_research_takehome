@@ -1,4 +1,5 @@
 from langchain_core.language_models import BaseLanguageModel
+from langchain_core.runnables import RunnableConfig
 from langgraph.graph.state import CompiledStateGraph, StateGraph
 from langgraph.types import Send
 
@@ -50,8 +51,8 @@ class ResearchAgentOrchestratorGraphBuilder:
 
         return graph_builder.compile()
 
-    def research(self, state: ResearchState):
-        results = self._research_graph.invoke(state)
+    def research(self, state: ResearchState, config: RunnableConfig):
+        results = self._research_graph.invoke(state, config=config)
         return {"results": [results]}
 
     def parallel_research(self, state: OrchestratorResearchState):
