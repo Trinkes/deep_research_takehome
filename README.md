@@ -170,3 +170,5 @@ def research_agent_orchestrator() -> CompiledStateGraph:
   - show an error to the user
 - Experiment with different models on each step and optimize for quality or pricing
 
+## Note
+- This task took me around 10 hours, spread over two days.
